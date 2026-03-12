@@ -3,27 +3,31 @@ import pandas as pd
 import numpy as np
 
 class MerchandisingAnalyst:
-    def __init__(self, data_dir='data'):
+    def __init__(self, data_dir='data', market_df=None, fundamentals_df=None):
         """
         Initializes the Merchandising Analyst by loading market data and fundamental supply & demand data.
         """
-        self.data_dir = data_dir
-        
-        # Use relative paths from the script execution context
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        market_path = os.path.join(base_dir, self.data_dir, 'market_prices.csv')
-        supply_demand_path = os.path.join(base_dir, self.data_dir, 'supply_demand.csv')
-        
-        try:
-            # Parse dates for market prices and set the date as index
-            self.market_df = pd.read_csv(market_path, parse_dates=['Date'])
-            self.market_df.set_index('Date', inplace=True)
-            self.fundamentals_df = pd.read_csv(supply_demand_path)
-            # print(f"Successfully loaded data. Market data: {len(self.market_df)} rows, Fundamentals: {len(self.fundamentals_df)} rows.")
-        except FileNotFoundError as e:
-            print(f"Error loading data: {e}. Please ensure data_pipeline.py has been run successfully.")
-            self.market_df = pd.DataFrame()
-            self.fundamentals_df = pd.DataFrame()
+        if market_df is not None and fundamentals_df is not None:
+            self.market_df = market_df
+            self.fundamentals_df = fundamentals_df
+        else:
+            self.data_dir = data_dir
+            
+            # Use relative paths from the script execution context
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            market_path = os.path.join(base_dir, self.data_dir, 'market_prices.csv')
+            supply_demand_path = os.path.join(base_dir, self.data_dir, 'supply_demand.csv')
+            
+            try:
+                # Parse dates for market prices and set the date as index
+                self.market_df = pd.read_csv(market_path, parse_dates=['Date'])
+                self.market_df.set_index('Date', inplace=True)
+                self.fundamentals_df = pd.read_csv(supply_demand_path)
+                # print(f"Successfully loaded data. Market data: {len(self.market_df)} rows, Fundamentals: {len(self.fundamentals_df)} rows.")
+            except FileNotFoundError as e:
+                print(f"Error loading data: {e}. Please ensure data_pipeline.py has been run successfully.")
+                self.market_df = pd.DataFrame()
+                self.fundamentals_df = pd.DataFrame()
             
     def get_balance_sheet(self, commodity: str) -> pd.DataFrame:
         """

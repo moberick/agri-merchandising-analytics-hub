@@ -12,12 +12,18 @@ st.set_page_config(
 
 st.title("Agri-Merchandising Analytics Hub | Cargill Candidate Portfolio")
 
-# Initialize the analyst engine
-@st.cache_resource
-def get_analyst():
-    return MerchandisingAnalyst()
+@st.cache_data(ttl=3600)  # Caches data for 1 hour
+def load_all_data():
+    # Load your fundamentals and price CSVs here
+    prices = pd.read_csv('data/market_prices.csv', parse_dates=['Date'])
+    prices.set_index('Date', inplace=True)
+    fundamentals = pd.read_csv('data/supply_demand.csv')
+    return prices, fundamentals
 
-analyst = get_analyst()
+market_df, fundamentals_df = load_all_data()
+
+# Initialize the analyst engine with the cached data
+analyst = MerchandisingAnalyst(market_df=market_df, fundamentals_df=fundamentals_df)
 
 # 2. Sidebar
 st.sidebar.header("Commodity Selection")
@@ -149,9 +155,11 @@ with col2:
     st.subheader("3. Price Momentum")
     
     fig_price = go.Figure()
+    # Plot restricted data to optimize performance instead of all 252 rows
+    recent_prices = prices_df.tail(90)
     fig_price.add_trace(go.Scatter(
-        x=prices_df.index, 
-        y=prices_df[ticker],
+        x=recent_prices.index, 
+        y=recent_prices[ticker],
         mode='lines',
         name=f'{ticker} Futures Price'
     ))
