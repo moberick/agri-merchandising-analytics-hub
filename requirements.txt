@@ -1,9 +1,9 @@
-# Core Merchandising Stack
+# Essentials only
 streamlit
 pandas
 yfinance
 plotly
 openpyxl
 
-# Force compatibility
+# Force NumPy 1.x to avoid compatibility breaks with Pandas
 numpy<2.0.0
