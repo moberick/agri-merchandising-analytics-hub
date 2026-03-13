@@ -6,11 +6,11 @@ from analytics_engine import MerchandisingAnalyst
 
 # 1. Setup
 st.set_page_config(
-    page_title="Agri-Merchandising Analytics Hub | Cargill Candidate Portfolio",
+    page_title="Agri-Merchandising Analytics Hub",
     layout="wide"
 )
 
-st.title("Agri-Merchandising Analytics Hub | Cargill Candidate Portfolio")
+st.title("Agri-Merchandising Analytics Hub")
 
 @st.cache_data(ttl=3600)  # Caches data for 1 hour
 def load_all_data():
